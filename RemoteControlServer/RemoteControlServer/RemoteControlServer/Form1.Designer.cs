@@ -41,7 +41,7 @@
             // backwardIndi
             // 
             this.backwardIndi.Image = global::RemoteControlServer.Properties.Resources.AlphaArrowDown;
-            this.backwardIndi.Location = new System.Drawing.Point(86, 191);
+            this.backwardIndi.Location = new System.Drawing.Point(110, 205);
             this.backwardIndi.Name = "backwardIndi";
             this.backwardIndi.Size = new System.Drawing.Size(100, 90);
             this.backwardIndi.TabIndex = 3;
@@ -51,7 +51,7 @@
             // leftIndi
             // 
             this.leftIndi.Image = global::RemoteControlServer.Properties.Resources.AlphaArrowLeft;
-            this.leftIndi.Location = new System.Drawing.Point(-5, 102);
+            this.leftIndi.Location = new System.Drawing.Point(19, 116);
             this.leftIndi.Name = "leftIndi";
             this.leftIndi.Size = new System.Drawing.Size(97, 84);
             this.leftIndi.TabIndex = 2;
@@ -61,7 +61,7 @@
             // rightIndi
             // 
             this.rightIndi.Image = global::RemoteControlServer.Properties.Resources.AlphaArrowFixedRight;
-            this.rightIndi.Location = new System.Drawing.Point(183, 102);
+            this.rightIndi.Location = new System.Drawing.Point(207, 116);
             this.rightIndi.Name = "rightIndi";
             this.rightIndi.Size = new System.Drawing.Size(118, 73);
             this.rightIndi.TabIndex = 1;
@@ -71,7 +71,7 @@
             // forwardIndi
             // 
             this.forwardIndi.Image = global::RemoteControlServer.Properties.Resources.AlphaArrowUp;
-            this.forwardIndi.Location = new System.Drawing.Point(86, 12);
+            this.forwardIndi.Location = new System.Drawing.Point(110, 26);
             this.forwardIndi.Name = "forwardIndi";
             this.forwardIndi.Size = new System.Drawing.Size(91, 92);
             this.forwardIndi.TabIndex = 0;
@@ -82,7 +82,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(282, 287);
+            this.ClientSize = new System.Drawing.Size(325, 315);
             this.Controls.Add(this.backwardIndi);
             this.Controls.Add(this.leftIndi);
             this.Controls.Add(this.rightIndi);

@@ -23,12 +23,43 @@ namespace MonoBrickHelloWorld
 			mainClass.networker.connect ();
 
 		}
+			
 	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	class netWorkingClass
 	{
 
-		private static string connectIP = "192.168.1.43";
+		private const string connectIP = "192.168.43.87";
+		private const int connectPort = 1337;
 
 		private Socket sck;
 
@@ -37,7 +68,7 @@ namespace MonoBrickHelloWorld
 			sck = socket ();
 			try 
 			{
-				sck.Connect (new IPEndPoint (IPAddress.Parse(connectIP), 13367));	
+				sck.Connect(new IPEndPoint(IPAddress.Parse(connectIP), connectPort));
 
 				new Thread(delegate ()
 					{
@@ -46,7 +77,8 @@ namespace MonoBrickHelloWorld
 			} 
 			catch  
 			{
-				LcdConsole.WriteLine ("Failed to connect to remote, please run remote first.");
+				LcdConsole.WriteLine ("Failed to connect to remote, \n please run remote first.");
+				Thread.Sleep (2500);
 			}
 
 		}
@@ -82,7 +114,7 @@ namespace MonoBrickHelloWorld
 						LcdConsole.WriteLine("backward");
 						break;
 					case "right":
-						LcdConsole.WriteLine("backward");
+						LcdConsole.WriteLine("right");
 						break;
 					}
 				} 
