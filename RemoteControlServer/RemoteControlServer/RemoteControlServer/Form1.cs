@@ -16,6 +16,7 @@ namespace RemoteControlServer
     public partial class RemoteControlServer : Form
     {
         private Socket sck, acc;
+        private bool goingForward = false, goingBackward = false, goingLeft = false, goingRight = false;
 
         public RemoteControlServer()
         {
@@ -62,15 +63,57 @@ namespace RemoteControlServer
             {
                 case Keys.W:
                     acc.Send(getBytes("forward"),0, getBytes("forward").Length, 0);
+
+                    if (goingForward == false)
+                    {
+                        goingForward = true;
+                        forwardIndi.Visible = true;
+                    }
+                    else
+                    {
+                        goingForward = false;
+                        forwardIndi.Visible = false;
+                    }
+
                     break;
                 case Keys.A:
                     acc.Send(getBytes("left"), 0, getBytes("left").Length, 0);
+                    if (goingLeft == false)
+                    {
+                        goingLeft = true;
+                        leftIndi.Visible = true;
+                    }
+                    else
+                    {
+                        goingLeft = false;
+                        leftIndi.Visible = false;
+                    }
                     break;
                 case Keys.S:
                     acc.Send(getBytes("backward"), 0, getBytes("backward").Length, 0);
+                    if (goingBackward == false)
+                    {
+                        goingBackward = true;
+                        backwardIndi.Visible = true;
+                    }
+                    else
+                    {
+                        goingBackward = false;
+                        backwardIndi.Visible = false;
+                    }
                     break;
                 case Keys.D:
                     acc.Send(getBytes("right"), 0, getBytes("right").Length, 0);
+                    if (goingRight == false)
+                    {
+                        goingRight = true;
+                        rightIndi.Visible = true;
+                    }
+                    else
+                    {
+                        goingRight = false;
+                        rightIndi.Visible = false;
+                    }
                     break;
             }
 
