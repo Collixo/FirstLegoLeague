@@ -32,6 +32,8 @@
             this.leftIndi = new System.Windows.Forms.PictureBox();
             this.rightIndi = new System.Windows.Forms.PictureBox();
             this.forwardIndi = new System.Windows.Forms.PictureBox();
+            this.grabbingLabel = new System.Windows.Forms.Label();
+            this.releasingLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.backwardIndi)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.leftIndi)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.rightIndi)).BeginInit();
@@ -78,11 +80,33 @@
             this.forwardIndi.TabStop = false;
             this.forwardIndi.Visible = false;
             // 
+            // grabbingLabel
+            // 
+            this.grabbingLabel.AutoSize = true;
+            this.grabbingLabel.Location = new System.Drawing.Point(19, 26);
+            this.grabbingLabel.Name = "grabbingLabel";
+            this.grabbingLabel.Size = new System.Drawing.Size(67, 17);
+            this.grabbingLabel.TabIndex = 4;
+            this.grabbingLabel.Text = "Grabbing";
+            this.grabbingLabel.Visible = false;
+            // 
+            // releasingLabel
+            // 
+            this.releasingLabel.AutoSize = true;
+            this.releasingLabel.Location = new System.Drawing.Point(208, 26);
+            this.releasingLabel.Name = "releasingLabel";
+            this.releasingLabel.Size = new System.Drawing.Size(71, 17);
+            this.releasingLabel.TabIndex = 5;
+            this.releasingLabel.Text = "Releasing";
+            this.releasingLabel.Visible = false;
+            // 
             // RemoteControlServer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(325, 315);
+            this.Controls.Add(this.releasingLabel);
+            this.Controls.Add(this.grabbingLabel);
             this.Controls.Add(this.backwardIndi);
             this.Controls.Add(this.leftIndi);
             this.Controls.Add(this.rightIndi);
@@ -95,6 +119,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.rightIndi)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.forwardIndi)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -104,6 +129,8 @@
         private System.Windows.Forms.PictureBox rightIndi;
         private System.Windows.Forms.PictureBox leftIndi;
         private System.Windows.Forms.PictureBox backwardIndi;
+        private System.Windows.Forms.Label grabbingLabel;
+        private System.Windows.Forms.Label releasingLabel;
     }
 }
 
