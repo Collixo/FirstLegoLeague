@@ -8,16 +8,18 @@ using System.Threading;
 using System.Text;
 using System.Net;
 using System.Net.Sockets;
-
+using System.Timers;
+using System.IO;
 namespace MonoBrickHelloWorld
 {
 	class MainClass
 	{
 		private netWorkingClass networker;
+		private repeaterClass repeater;
 		private Motor MotorLeft;
 		private Motor MotorRight;
 		private Motor MotorClaw;
-		private int speed = 25;
+		private int speed = 35;
 
 
 		public static void Main (string[] args)
@@ -26,6 +28,9 @@ namespace MonoBrickHelloWorld
 			mainClass.networker = new netWorkingClass ();
 			mainClass.networker.connect ();
 			mainClass.networker.setMainClass (mainClass);
+			mainClass.repeater = new repeaterClass ();
+			mainClass.repeater.init ();
+
 
 			mainClass.MotorRight = new Motor (MotorPort.OutA);
 			mainClass.MotorLeft = new Motor (MotorPort.OutB);
@@ -35,24 +40,33 @@ namespace MonoBrickHelloWorld
 			
 		public void forwards()
 		{
+			repeater.stopTimer ();
+			repeater.startTimer ("forward");
 			MotorRight.SetSpeed((sbyte)speed);
 			MotorLeft.SetSpeed((sbyte)speed);
+
 		}
 
 		public void backwards()
 		{
+			repeater.stopTimer ();
+			repeater.startTimer ("backward");
 			MotorRight.SetSpeed((sbyte)-speed);
 			MotorLeft.SetSpeed((sbyte)-speed);
 		}
 
 		public void left()
 		{
+			repeater.stopTimer ();
+			repeater.startTimer ("left");
 			MotorRight.SetSpeed((sbyte)speed);
 			MotorLeft.SetSpeed((sbyte)-speed);
 		}
 
 		public void right()
 		{
+			repeater.stopTimer ();
+			repeater.startTimer ("right");
 			MotorRight.SetSpeed((sbyte)-speed);
 			MotorLeft.SetSpeed((sbyte)speed);
 		}
@@ -65,11 +79,15 @@ namespace MonoBrickHelloWorld
 
 		public void clawGrab()
 		{
+			repeater.stopTimer ();
+			repeater.startTimer ("grab");
 			MotorClaw.SetSpeed ((sbyte)speed);
 		}
 
 		public void clawRelease()
 		{
+			repeater.stopTimer ();
+			repeater.startTimer ("release");
 			MotorClaw.SetSpeed ((sbyte)-speed);
 		}
 
@@ -77,8 +95,70 @@ namespace MonoBrickHelloWorld
 		{
 			MotorClaw.Off();
 		}
+
+		public void endAll()
+		{
+			stop ();
+			repeater.stopTimer ();
+			repeater.closeWriter ();
+		}
+
 	}
 
+
+
+
+	public class repeaterClass
+	{
+		private System.Timers.Timer timer;
+		private int elapsedTime;
+		private int interval = 100;
+		public StreamWriter sw;
+		private bool firstRun = true;
+
+		private string direction;
+
+		public void init()
+		{
+			timer = new System.Timers.Timer();
+			timer.Interval = interval;
+			sw = new StreamWriter(@"/home/root/apps/RobotController/route.txt");
+
+			timer.Elapsed += timerEvent;
+		}
+
+		public void startTimer(string dir)
+		{
+			direction = dir;
+			timer.Enabled = true;
+		}
+
+		public void stopTimer()
+		{
+			if (firstRun == false) 
+			{
+				timer.Enabled = false;
+				sw.WriteLine (direction + "," + elapsedTime);
+				direction = "";
+				elapsedTime = 0;
+			} 
+			else 
+			{
+				firstRun = false;
+			}
+		}
+
+		public void closeWriter()
+		{
+			timer.Enabled = false;
+			sw.Close ();
+		}
+
+		public void timerEvent(Object source, System.Timers.ElapsedEventArgs e)
+		{
+			elapsedTime += interval;
+		}
+	}
 
 
 
@@ -86,7 +166,7 @@ namespace MonoBrickHelloWorld
 	class netWorkingClass
 	{
 
-		private const string connectIP = "192.168.137.173";
+		private const string connectIP = "192.168.43.87";
 		private const int connectPort = 1337;
 
 		private Socket sck;
@@ -169,6 +249,13 @@ namespace MonoBrickHelloWorld
 						break;
 					case "stop":
 						mainClass.stop();	
+						break;
+						case "endAll":
+						mainClass.endAll();
+						LcdConsole.WriteLine("END END END END");
+						break;
+						default:
+						LcdConsole.WriteLine(data);
 						break;
 					}
 

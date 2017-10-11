@@ -34,6 +34,9 @@
             this.forwardIndi = new System.Windows.Forms.PictureBox();
             this.grabbingLabel = new System.Windows.Forms.Label();
             this.releasingLabel = new System.Windows.Forms.Label();
+            this.repeatButton = new System.Windows.Forms.Button();
+            this.repeatLabel = new System.Windows.Forms.Label();
+            this.initButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.backwardIndi)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.leftIndi)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.rightIndi)).BeginInit();
@@ -100,11 +103,45 @@
             this.releasingLabel.Text = "Releasing";
             this.releasingLabel.Visible = false;
             // 
+            // repeatButton
+            // 
+            this.repeatButton.Location = new System.Drawing.Point(217, 205);
+            this.repeatButton.Name = "repeatButton";
+            this.repeatButton.Size = new System.Drawing.Size(96, 90);
+            this.repeatButton.TabIndex = 6;
+            this.repeatButton.Text = "File found, repeat now!";
+            this.repeatButton.UseVisualStyleBackColor = true;
+            this.repeatButton.Visible = false;
+            this.repeatButton.Click += new System.EventHandler(this.repeatButton_Click);
+            // 
+            // repeatLabel
+            // 
+            this.repeatLabel.AutoSize = true;
+            this.repeatLabel.Location = new System.Drawing.Point(190, 298);
+            this.repeatLabel.Name = "repeatLabel";
+            this.repeatLabel.Size = new System.Drawing.Size(135, 17);
+            this.repeatLabel.TabIndex = 7;
+            this.repeatLabel.Text = "No source file found";
+            this.repeatLabel.Visible = false;
+            // 
+            // initButton
+            // 
+            this.initButton.Location = new System.Drawing.Point(19, 225);
+            this.initButton.Name = "initButton";
+            this.initButton.Size = new System.Drawing.Size(85, 70);
+            this.initButton.TabIndex = 8;
+            this.initButton.Text = "init";
+            this.initButton.UseVisualStyleBackColor = true;
+            this.initButton.Click += new System.EventHandler(this.initButton_Click);
+            // 
             // RemoteControlServer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(325, 315);
+            this.Controls.Add(this.initButton);
+            this.Controls.Add(this.repeatLabel);
+            this.Controls.Add(this.repeatButton);
             this.Controls.Add(this.releasingLabel);
             this.Controls.Add(this.grabbingLabel);
             this.Controls.Add(this.backwardIndi);
@@ -131,6 +168,9 @@
         private System.Windows.Forms.PictureBox backwardIndi;
         private System.Windows.Forms.Label grabbingLabel;
         private System.Windows.Forms.Label releasingLabel;
+        private System.Windows.Forms.Button repeatButton;
+        private System.Windows.Forms.Label repeatLabel;
+        private System.Windows.Forms.Button initButton;
     }
 }
 
