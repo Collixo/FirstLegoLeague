@@ -16,6 +16,7 @@ namespace RemoteControlServer
 {
     public partial class RemoteControlServer : Form
     {
+        // Variables
         private Socket sck, acc;
         private bool goingForward = false, goingBackward = false, goingLeft = false, goingRight = false, grabbing = false;
         private bool releasing = false;
@@ -24,67 +25,71 @@ namespace RemoteControlServer
         private StreamReader sr;
 
         private List<string> cmds;
+        string[] lines;
 
         private string fileText;
 
         public RemoteControlServer()
         {
             InitializeComponent();
-
-
-
+            
+            // Create server socket            
             sck = socket();
             sck.Bind(new IPEndPoint(0, 1337));
             sck.Listen(0);
 
-
+            // Check if file exist
             if (File.Exists(@fileLocation))
             {
-                repeatButton.Visible = true;
+                // Initialize the streamreader
                 sr = new StreamReader(fileLocation);
 
+                // make button visible
+                initButton.Visible = true;
+
+                // Reads file and places it in a variable
                 fileText = sr.ReadToEnd();
 
-                string[] lines = fileText.Split('\n');
                 cmds = new List<string>();
 
-                for (int i = 0; i < lines.Length; i++)
-                {
-                    string[] currentCmd = lines[i].Split(',');
-
-                    cmds.Add(currentCmd[0]);
-                    cmds.Add(currentCmd[1]);
-                }
             }
             else
             {
-                repeatLabel.Visible = true;
+                // If file is not found, button won't be visible.
+                initButton.Visible = false;
             }
 
-
+            // New thread for sending data whilst controlling
             new Thread(delegate ()
             {
+                // Accept connection from client.
                 acc = sck.Accept();
                 MessageBox.Show("Robot connected.");
+                // Close old socket. 
                 sck.Close();
 
+                // Continuously check for received data. 
                 while (true)
                 {
                     try
                     {
+                        // Byte array for received data.
                         byte[] buffer = new byte[255];
+                       
                         int rec = acc.Receive(buffer, 0, buffer.Length, 0);
 
+                        // Check if still connected. 
                         if (rec <= 0)
                         {
                             throw new SocketException();
                         }
 
+                        // Resize the array.
                         Array.Resize(ref buffer, rec);
-                        acc.Send(getBytes("init"), 0, getBytes("init").Length, 0);
                     }
                     catch
                     {
+                        // If disconnected show message and close sockets. 
                         MessageBox.Show("Server: Client disconnected.");
                         acc.Close();
                         Application.Exit();
@@ -94,35 +99,55 @@ namespace RemoteControlServer
             }).Start();
         }
 
+        // When init button is pressed. 
         private void initButton_Click(object sender, EventArgs e)
         {
-            acc.Send(getBytes("init"), 0, getBytes("init").Length, 0);
+            // Assign seperators. 
+            string[] stringSeparators = new string[] { "\r\n" };
+            // Split file on seperators. 
+            string[] splittedFile = fileText.Split(stringSeparators, StringSplitOptions.None);
+
+            // Loop through all commands from file and send them seperatly.
+            for (int i = 0; i < splittedFile.Length; i++)
+            {
+                send(splittedFile[i]);
+
+                // Stop the thread, so client has time to process command. 
+                Thread.Sleep(250);
+            }
+
+            // Send repeat so client knows to repeat. 
+            send("repeat");
+
+            MessageBox.Show("Sending.");
+            
         }
 
         private void repeatButton_Click(object sender, EventArgs e)
         {
-            repeating = true;
+            //repeating = true;
 
-            for (int i = 0; i < cmds.Count; i += 2)
-            {
-                acc.Send(getBytes(cmds[i]), 0, getBytes(cmds[i]).Length, 0);
-                Thread.Sleep(int.Parse(cmds[i + 1]));
-                //acc.Send(getBytes(cmds[i]), 0, getBytes(cmds[i]).Length, 0);
-            }
+            //for (int i = 0; i < cmds.Count; i += 2)
+            //{
+            //    acc.Send(getBytes(cmds[i]), 0, getBytes(cmds[i]).Length, 0);
+            //    Thread.Sleep(int.Parse(cmds[i + 1]));
+            //    //acc.Send(getBytes(cmds[i]), 0, getBytes(cmds[i]).Length, 0);
+            //}
         }
 
-
+        // Function to check what key is pressed. 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
+            // Check if robot is not already repeating. 
             if (repeating == false)
             {
-                repeatButton.Enabled = false;
+                // Switch to check 
                 switch (keyData)
                 {
                     case Keys.W:
+                        // Check if already going backwards, sets arrows on winform. 
                         if (goingBackward == false)
                         {
-                            acc.Send(getBytes("forward"), 0, getBytes("forward").Length, 0);
                             if (goingForward == false && goingBackward == false)
                             {
                                 goingForward = true;
@@ -142,16 +167,15 @@ namespace RemoteControlServer
                             backwardIndi.Visible = false;
                             leftIndi.Visible = false;
                             rightIndi.Visible = false;
-                            acc.Send(getBytes("forward"), 0, getBytes("forward").Length, 0);
                             goingForward = true;
                             forwardIndi.Visible = true;
 
                         }
+                        send("forward");
                         break;
                     case Keys.A:
                         if (goingRight == false)
                         {
-                            acc.Send(getBytes("left"), 0, getBytes("left").Length, 0);
                             if (goingLeft == false)
                             {
                                 goingLeft = true;
@@ -172,15 +196,14 @@ namespace RemoteControlServer
                             forwardIndi.Visible = false;
                             backwardIndi.Visible = false;
 
-                            acc.Send(getBytes("left"), 0, getBytes("left").Length, 0);
                             goingLeft = true;
                             leftIndi.Visible = true;
                         }
+                        send("left");
                         break;
                     case Keys.S:
                         if (goingForward == false)
                         {
-                            acc.Send(getBytes("backward"), 0, getBytes("backward").Length, 0);
                             if (goingBackward == false)
                             {
                                 goingBackward = true;
@@ -201,15 +224,14 @@ namespace RemoteControlServer
                             rightIndi.Visible = false;
                             leftIndi.Visible = false;
 
-                            acc.Send(getBytes("backward"), 0, getBytes("backward").Length, 0);
                             goingBackward = true;
                             backwardIndi.Visible = true;
                         }
+                        send("backward");
                         break;
                     case Keys.D:
                         if (goingLeft == false)
                         {
-                            acc.Send(getBytes("right"), 0, getBytes("right").Length, 0);
                             if (goingRight == false)
                             {
                                 goingRight = true;
@@ -229,15 +251,15 @@ namespace RemoteControlServer
                             leftIndi.Visible = false;
                             forwardIndi.Visible = false;
                             backwardIndi.Visible = false;
-                            acc.Send(getBytes("right"), 0, getBytes("right").Length, 0);
+                            
                             goingRight = true;
                             rightIndi.Visible = true;
                         }
+                        send("right");
                         break;
                     case Keys.Q:
                         if (releasing == false)
                         {
-                            acc.Send(getBytes("grab"), 0, getBytes("grab").Length, 0);
                             if (grabbing == false)
                             {
                                 grabbing = true;
@@ -253,15 +275,16 @@ namespace RemoteControlServer
                         {
                             releasing = false;
                             releasingLabel.Visible = false;
-                            acc.Send(getBytes("grab"), 0, getBytes("grab").Length, 0);
+                            
                             grabbing = true;
                             grabbingLabel.Visible = true;
                         }
+                        send("grab");
                         break;
                     case Keys.E:
                         if (grabbing == false)
                         {
-                            acc.Send(getBytes("release"), 0, getBytes("release").Length, 0);
+                            send("release");
                             if (releasing == false)
                             {
                                 releasing = true;
@@ -277,15 +300,12 @@ namespace RemoteControlServer
                         {
                             grabbing = false;
                             grabbingLabel.Visible = false;
-                            acc.Send(getBytes("release"), 0, getBytes("release").Length, 0);
                             releasing = true;
                             releasingLabel.Visible = true;
-
                         }
                         break;
                     case Keys.Space:
-                        acc.Send(getBytes("stop"), 0, getBytes("stop").Length, 0);
-
+                        send("stop");
                         goingForward = false;
                         forwardIndi.Visible = false;
 
@@ -299,7 +319,7 @@ namespace RemoteControlServer
                         rightIndi.Visible = false;
                         break;
                     case Keys.F:
-                        acc.Send(getBytes("clawStop"), 0, getBytes("clawStop").Length, 0);
+                        send("clawStop");
                         grabbing = false;
                         grabbingLabel.Visible = false;
 
@@ -307,7 +327,7 @@ namespace RemoteControlServer
                         releasingLabel.Visible = false;
                         break;
                     case Keys.Escape:
-                        acc.Send(getBytes("endAll"), 0, getBytes("endAll").Length, 0);
+                        send("endAll");
                         break;
                 }
             }
@@ -319,15 +339,18 @@ namespace RemoteControlServer
         {
 
         }
-
+    
+        // Quick socket creation function.
         Socket socket()
         {
             return new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         }
 
-        byte[] getBytes(string message)
+        // Shortcut for sending data to client. 
+        private void send(string text)
         {
-            return Encoding.Default.GetBytes(message);
+            byte[] bytes = Encoding.Default.GetBytes(text);
+            acc.Send(bytes, 0, bytes.Length, 0);    
         }
     }
 }
