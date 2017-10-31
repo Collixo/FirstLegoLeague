@@ -59,15 +59,16 @@ namespace MonoBrickHelloWorld
 		// Function that will repeat the file. 
 		public void repeat()
 		{
+			// Set robot angle back to 0 on start of repeat. 
 			while(gyroscope.Read() != 0)
 			{
 				if (gyroscope.Read () > 0) 
 				{
-					left ();
+					left (true);
 				}
 				else				
 				{
-					right();	
+					right(true);	
 				}
 			}
 
@@ -144,20 +145,37 @@ namespace MonoBrickHelloWorld
 			MotorLeft.SetSpeed((sbyte)-speed);
 		}
 
-		public void left()
+		public void left(bool  calibrating = false)
 		{
 			timer.stopTimer ();
 			timer.startTimer ("left");
-			MotorRight.SetSpeed((sbyte)speed);
-			MotorLeft.SetSpeed((sbyte)-speed);
+
+			if (calibrating == false) 
+			{
+				MotorRight.SetSpeed ((sbyte)speed);
+				MotorLeft.SetSpeed ((sbyte)-speed);
+			}
+			else 
+			{
+				MotorRight.SetSpeed ((sbyte)speed/10);
+				MotorLeft.SetSpeed ((sbyte)-speed/10);
+			}
 		}
 
-		public void right()
+		public void right(bool calibrating = false)
 		{
 			timer.stopTimer ();
 			timer.startTimer ("right");
-			MotorRight.SetSpeed((sbyte)-speed);
-			MotorLeft.SetSpeed((sbyte)speed);
+			if (calibrating == false) 
+			{
+				MotorRight.SetSpeed((sbyte)-speed);
+				MotorLeft.SetSpeed((sbyte)speed);
+			}
+			else 
+			{
+				MotorRight.SetSpeed ((sbyte)-speed/10);
+				MotorLeft.SetSpeed ((sbyte)speed/10);
+			}
 		}
 
 		public void stop()
