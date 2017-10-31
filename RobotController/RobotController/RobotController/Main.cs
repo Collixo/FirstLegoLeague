@@ -24,11 +24,11 @@ namespace MonoBrickHelloWorld
 		private Motor MotorLeft;
 		private Motor MotorRight;
 		private Motor MotorClaw;
+		private EV3GyroSensor gyroscope;
 
 		// Lists for saving the raw commands and the split commands.
 		public List<string> cmds; 
 		public List<string> actualCmds;
-
 
 		public static void Main (string[] args)
 		{
@@ -52,13 +52,26 @@ namespace MonoBrickHelloWorld
 			mainClass.MotorLeft = new Motor (MotorPort.OutB);
 			mainClass.MotorClaw = new Motor (MotorPort.OutC);
 
-
-
+			mainClass.gyroscope = new EV3GyroSensor (SensorPort.In1);
+			mainClass.gyroscope.Reset ();
 		}
 
 		// Function that will repeat the file. 
 		public void repeat()
 		{
+			while(gyroscope.Read() != 0)
+			{
+				if (gyroscope.Read () > 0) 
+				{
+					left ();
+				}
+				else				
+				{
+					right();	
+				}
+			}
+
+
 			// Split commands.
 			for (int i = 0; i < cmds.Count; i++) 
 			{
@@ -197,7 +210,7 @@ namespace MonoBrickHelloWorld
 		// Variables. 
 		private System.Timers.Timer timer;
 		private int elapsedTime;
-		private int interval = 100;
+		private int interval = 25;
 		public StreamWriter sw;
 		private bool firstRun = true;
 

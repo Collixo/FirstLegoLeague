@@ -43,7 +43,7 @@ namespace RemoteControlServer
             {
                 // Initialize the streamreader
                 sr = new StreamReader(fileLocation);
-
+                
                 // make button visible
                 initButton.Visible = true;
 
@@ -124,7 +124,7 @@ namespace RemoteControlServer
         }
 
         private void repeatButton_Click(object sender, EventArgs e)
-        {
+        {   
             //repeating = true;
 
             //for (int i = 0; i < cmds.Count; i += 2)
